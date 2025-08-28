@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compound Interest Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            min-height: 100vh;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .controls-panel:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+            border-color: rgba(17, 153, 142, 0.2);
+        }
+
+        h1 {
+            color: #1e293b;
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1.25rem 1.75rem;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            color: #1f2937;
+            font-size: 1.05rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #11998e;
+            background: #ffffff;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.1);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        select option {
+            background: #ffffff;
+            color: #1f2937;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #11998e;
+            font-weight: 700;
+            font-size: 1.05rem;
+            pointer-events: none;
+        }
+
+        input[type="number"] {
+            padding-left: 3rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+            border-color: rgba(17, 153, 142, 0.2);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(17, 153, 142, 0.3);
+        }
+
+        .result-card:hover::before {
+            left: 100%;
+        }
+
+        .result-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 450px;
+            margin-top: 1.5rem;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        canvas {
+            border-radius: 16px;
+        }
+
+        .toggle-group {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 16px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.25rem;
+            }
+            
+            .controls-panel {
+                position: static;
+            }
+
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .result-value {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Refined floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(17, 153, 142, 0.4);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0; 
+            }
+            50% { 
+                transform: translateY(-120px) rotate(180deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Accent elements */
+        .accent-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 50%;
+            top: 2rem;
+            right: 2rem;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="controls-panel">
+            <div class="accent-dot"></div>
+            <h1>Nick's Investment Calculator</h1>
+            
+            <div class="input-group">
+                <label for="principal">Initial Investment</label>
+                <div class="input-wrapper">
+                    <span class="currency-prefix">$</span>
+                    <input type="number" id="principal" value="10000" min="0" step="100" placeholder="10,000">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="monthlyContribution">Monthly Contribution</label>
+                <div class="input-wrapper">
+                    <span class="currency-prefix">$</span>
+                    <input type="number" id="monthlyContribution" value="500" min="0" step="50" placeholder="500">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="interestRate">Annual Interest Rate (%)</label>
+                <input type="number" id="interestRate" value="7" min="0" max="30" step="0.1" placeholder="7.0">
+            </div>
+            
+            <div class="input-group">
+                <label for="years">Investment Period (Years)</label>
+                <input type="number" id="years" value="20" min="1" max="50" step="1" placeholder="20">
+            </div>
+            
+            <div class="input-group">
+                <label for="compoundFreq">Compounding Frequency</label>
+                <select id="compoundFreq">
+                    <option value="1">Annually</option>
+                    <option value="4">Quarterly</option>
+                    <option value="12" selected>Monthly</option>
+                    <option value="365">Daily</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="accent-dot"></div>
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-view="growth">Growth Chart</button>
+                <button class="toggle-btn" data-view="breakdown">Breakdown</button>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-label">Final Balance</div>
+                    <div class="result-value" id="finalBalance">$0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Total Contributions</div>
+                    <div class="result-value" id="totalContributions">$0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Interest Earned</div>
+                    <div class="result-value" id="interestEarned">$0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Return on Investment</div>
+                    <div class="result-value" id="roi">0%</div>
+                </div>
+            </div>
+            
+            <div class="chart-wrapper">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create refined floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        let chart;
+        let currentView = 'growth';
+
+        // Initialize chart with refined styling
+        function initChart() {
+            const ctx = document.getElementById('chart').getContext('2d');
+            
+            // Create gradient for growth view
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(17, 153, 142, 0.3)');
+            gradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Balance',
+                        data: [],
+                        borderColor: '#11998e',
+                        backgroundColor: gradient,
+                        borderWidth: 4,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#11998e',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointHoverBackgroundColor: '#38ef7d',
+                        pointHoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#1f2937',
+                            bodyColor: '#374151',
+                            borderColor: '#11998e',
+                            borderWidth: 2,
+                            cornerRadius: 12,
+                            displayColors: false,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(17, 153, 142, 0.1)',
+                                borderColor: 'rgba(17, 153, 142, 0.2)'
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: { weight: '600' }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(17, 153, 142, 0.1)',
+                                borderColor: 'rgba(17, 153, 142, 0.2)'
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: { weight: '600' },
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function calculateCompoundInterest() {
+            const principal = parseFloat(document.getElementById('principal').value) || 0;
+            const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value) || 0;
+            const annualRate = parseFloat(document.getElementById('interestRate').value) / 100 || 0;
+            const years = parseInt(document.getElementById('years').value) || 0;
+            const compoundFreq = parseInt(document.getElementById('compoundFreq').value) || 12;
+
+            const labels = [];
+            const balanceData = [];
+            const contributionsData = [];
+            const interestData = [];
+
+            let balance = principal;
+            let totalContributions = principal;
+
+            for (let year = 0; year <= years; year++) {
+                labels.push(year === 0 ? 'Start' : `Year ${year}`);
+                
+                if (year === 0) {
+                    balanceData.push(balance);
+                    contributionsData.push(totalContributions);
+                    interestData.push(0);
+                } else {
+                    // Calculate compound interest with monthly contributions
+                    const monthlyRate = annualRate / 12;
+                    for (let month = 0; month < 12; month++) {
+                        balance = balance * (1 + monthlyRate) + monthlyContribution;
+                        totalContributions += monthlyContribution;
+                    }
+                    
+                    balanceData.push(Math.round(balance));
+                    contributionsData.push(totalContributions);
+                    interestData.push(Math.round(balance - totalContributions));
+                }
+            }
+
+            const finalBalance = balance;
+            const totalInterest = finalBalance - totalContributions;
+            const roi = totalContributions > 0 ? ((totalInterest / totalContributions) * 100) : 0;
+
+            // Update display
+            document.getElementById('finalBalance').textContent = '$' + Math.round(finalBalance).toLocaleString();
+            document.getElementById('totalContributions').textContent = '$' + totalContributions.toLocaleString();
+            document.getElementById('interestEarned').textContent = '$' + Math.round(totalInterest).toLocaleString();
+            document.getElementById('roi').textContent = roi.toFixed(1) + '%';
+
+            // Update chart
+            updateChart(labels, balanceData, contributionsData, interestData);
+        }
+
+        function updateChart(labels, balanceData, contributionsData, interestData) {
+            const ctx = chart.canvas.getContext('2d');
+            
+            if (currentView === 'growth') {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(17, 153, 142, 0.3)');
+                gradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+
+                chart.data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Balance',
+                        data: balanceData,
+                        borderColor: '#11998e',
+                        backgroundColor: gradient,
+                        borderWidth: 4,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#11998e',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 3
+                    }]
+                };
+            } else {
+                const contributionGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                contributionGradient.addColorStop(0, 'rgba(56, 239, 125, 0.4)');
+                contributionGradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+
+                const interestGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                interestGradient.addColorStop(0, 'rgba(17, 153, 142, 0.5)');
+                interestGradient.addColorStop(1, 'rgba(17, 153, 142, 0.1)');
+
+                chart.data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Your Contributions',
+                        data: contributionsData,
+                        borderColor: '#38ef7d',
+                        backgroundColor: contributionGradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#38ef7d',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }, {
+                        label: 'Interest Earned',
+                        data: interestData,
+                        borderColor: '#11998e',
+                        backgroundColor: interestGradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#11998e',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                };
+            }
+            chart.update('active');
+        }
+
+        // Toggle between views
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentView = btn.dataset.view;
+                calculateCompoundInterest();
+            });
+        });
+
+        // Add event listeners
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', calculateCompoundInterest);
+        });
+
+        // Initialize
+        createParticles();
+        initChart();
+        calculateCompoundInterest();
+    </script>
+</body>
+</html>
