@@ -46,7 +46,7 @@
         .controls-panel:hover {
             transform: translateY(-4px);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-            border-color: rgba(17, 153, 142, 0.2);
+            border-color: rgba(96, 165, 250, 0.2);
         }
 
         h1 {
@@ -54,7 +54,7 @@
             font-size: 2.75rem;
             font-weight: 800;
             margin-bottom: 2.5rem;
-            background: linear-gradient(135deg, #11998e, #38ef7d);
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -94,10 +94,10 @@
 
         input:focus, select:focus {
             outline: none;
-            border-color: #11998e;
+            border-color: #60A5FA;
             background: #ffffff;
             transform: scale(1.02);
-            box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.1);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
         }
 
         input::placeholder {
@@ -114,7 +114,7 @@
             left: 1.5rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #11998e;
+            color: #60A5FA;
             font-weight: 700;
             font-size: 1.05rem;
             pointer-events: none;
@@ -137,7 +137,7 @@
         .chart-container:hover {
             transform: translateY(-4px);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-            border-color: rgba(17, 153, 142, 0.2);
+            border-color: rgba(96, 165, 250, 0.2);
         }
 
         .results-grid {
@@ -148,7 +148,7 @@
         }
 
         .result-card {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
             border-radius: 20px;
             padding: 2rem;
             text-align: center;
@@ -170,7 +170,7 @@
 
         .result-card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 20px 40px rgba(96, 165, 250, 0.3);
         }
 
         .result-card:hover::before {
@@ -230,9 +230,9 @@
         }
 
         .toggle-btn.active {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
             color: white;
-            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
             transform: translateY(-1px);
         }
 
@@ -275,7 +275,7 @@
             position: absolute;
             width: 3px;
             height: 3px;
-            background: rgba(17, 153, 142, 0.4);
+            background: rgba(96, 165, 250, 0.4);
             border-radius: 50%;
             animation: float 8s ease-in-out infinite;
         }
@@ -296,7 +296,7 @@
             position: absolute;
             width: 8px;
             height: 8px;
-            background: linear-gradient(135deg, #11998e, #38ef7d);
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
             border-radius: 50%;
             top: 2rem;
             right: 2rem;
@@ -409,8 +409,8 @@
             
             // Create gradient for growth view
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(17, 153, 142, 0.3)');
-            gradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+            gradient.addColorStop(0, 'rgba(96, 165, 250, 0.3)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -419,17 +419,17 @@
                     datasets: [{
                         label: 'Total Balance',
                         data: [],
-                        borderColor: '#11998e',
+                        borderColor: '#60A5FA',
                         backgroundColor: gradient,
                         borderWidth: 4,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: '#11998e',
+                        pointBackgroundColor: '#60A5FA',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 3,
                         pointRadius: 5,
                         pointHoverRadius: 8,
-                        pointHoverBackgroundColor: '#38ef7d',
+                        pointHoverBackgroundColor: '#3B82F6',
                         pointHoverBorderColor: '#ffffff'
                     }]
                 },
@@ -444,7 +444,7 @@
                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
                             titleColor: '#1f2937',
                             bodyColor: '#374151',
-                            borderColor: '#11998e',
+                            borderColor: '#60A5FA',
                             borderWidth: 2,
                             cornerRadius: 12,
                             displayColors: false,
@@ -455,8 +455,8 @@
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(17, 153, 142, 0.1)',
-                                borderColor: 'rgba(17, 153, 142, 0.2)'
+                                color: 'rgba(96, 165, 250, 0.1)',
+                                borderColor: 'rgba(96, 165, 250, 0.2)'
                             },
                             ticks: {
                                 color: '#6b7280',
@@ -465,8 +465,8 @@
                         },
                         y: {
                             grid: {
-                                color: 'rgba(17, 153, 142, 0.1)',
-                                borderColor: 'rgba(17, 153, 142, 0.2)'
+                                color: 'rgba(96, 165, 250, 0.1)',
+                                borderColor: 'rgba(96, 165, 250, 0.2)'
                             },
                             ticks: {
                                 color: '#6b7280',
@@ -540,59 +540,59 @@
             
             if (currentView === 'growth') {
                 const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(17, 153, 142, 0.3)');
-                gradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+                gradient.addColorStop(0, 'rgba(96, 165, 250, 0.3)');
+                gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
                 chart.data = {
                     labels: labels,
                     datasets: [{
                         label: 'Total Balance',
                         data: balanceData,
-                        borderColor: '#11998e',
+                        borderColor: '#60A5FA',
                         backgroundColor: gradient,
                         borderWidth: 4,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 5,
                         pointHoverRadius: 8,
-                        pointBackgroundColor: '#11998e',
+                        pointBackgroundColor: '#60A5FA',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 3
                     }]
                 };
             } else {
                 const contributionGradient = ctx.createLinearGradient(0, 0, 0, 400);
-                contributionGradient.addColorStop(0, 'rgba(56, 239, 125, 0.4)');
-                contributionGradient.addColorStop(1, 'rgba(56, 239, 125, 0.1)');
+                contributionGradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                contributionGradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
                 const interestGradient = ctx.createLinearGradient(0, 0, 0, 400);
-                interestGradient.addColorStop(0, 'rgba(17, 153, 142, 0.5)');
-                interestGradient.addColorStop(1, 'rgba(17, 153, 142, 0.1)');
+                interestGradient.addColorStop(0, 'rgba(96, 165, 250, 0.5)');
+                interestGradient.addColorStop(1, 'rgba(96, 165, 250, 0.1)');
 
                 chart.data = {
                     labels: labels,
                     datasets: [{
                         label: 'Your Contributions',
                         data: contributionsData,
-                        borderColor: '#38ef7d',
+                        borderColor: '#3B82F6',
                         backgroundColor: contributionGradient,
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 4,
-                        pointBackgroundColor: '#38ef7d',
+                        pointBackgroundColor: '#3B82F6',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2
                     }, {
                         label: 'Interest Earned',
                         data: interestData,
-                        borderColor: '#11998e',
+                        borderColor: '#60A5FA',
                         backgroundColor: interestGradient,
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 4,
-                        pointBackgroundColor: '#11998e',
+                        pointBackgroundColor: '#60A5FA',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2
                     }]
